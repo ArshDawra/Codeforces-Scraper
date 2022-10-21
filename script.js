@@ -52,8 +52,8 @@ function renderchart(mydata){
       }] 
     });
 }
-var apiKey="eff3d7f1d923f13403d9722e211f2e29739a6905";
-var secretKey="4e16e6455c7e0014e8e20625b02b39a3a43f6b50";
+var apiKey="";//api key 
+var secretKey="";//secret key
 var rand = Math.floor((Math.random() * 10000) + 100000);
 var time=Math.floor(Date.now()/1000);
 var keytime="&apiKey="+apiKey+"&time="+time.toString();
