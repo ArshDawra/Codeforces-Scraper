@@ -1,0 +1,28 @@
+html{
+    scroll-behavior: smooth;
+}
+body{
+    background-color: rgb(255, 255, 255);
+}
+h1 {
+    text-align: center;
+    font-size: 3rem;
+    color: rgb(21, 31, 119);
+    padding: 1rem;
+}
+.cfimg{
+    width: 8rem;
+    padding-left: 4rem;
+    float: left;
+}
+.searchuser{
+    float: right;
+}
+.card{
+    box-shadow: 0 4px 8px 0 rgb(0, 0, 0);
+    width: 20rem;
+    margin-top: 6rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    margin-left: 20rem
+}

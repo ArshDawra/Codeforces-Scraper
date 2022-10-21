@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.3/axios.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <title>CF Scraper</title>
+  </head>
+  <body>
+    <div>
+      <h1>CODEFORCES SCRAPER</h1>
+      <div>
+        <img
+          src="https://cdn.iconscout.com/icon/free/png-256/code-forces-3521352-2944796.png"
+          class="cfimg"
+        />
+        <form align="center" id="searchuser">
+          <input
+            type="search"
+            id="Username"
+            name="username"
+            placeholder="Enter User Handle"
+          />
+          <i
+            onclick="initiate()"
+            style="height: 3rem; width: 3rem; color: rgb(7, 7, 7)"
+            class="fa-solid fa-search"
+          ></i>
+        </form>
+      </div>
+      <div class="card">
+        <div class="container">
+          <p id="handle">Handle :</p>
+          <p id="name">Name :</p>
+          <p id="country">Country :</p>
+          <p id="rating">Current Rating :</p>
+          <p id="maxrating">Maximum Rating :</p>
+          <p id="friendscount">Friends of User :</p>
+        </div>
+      </div>
+      <div
+        id="chartDiv"
+        style="width: 70%; height: 30rem; margin: 4rem; align-items: center"
+      ></div>
+    </div>
+  </body>
+  <script src="https://code.jscharting.com/2.9.0/jscharting.js"></script>
+  <script src="script.js"></script>
+</html>
