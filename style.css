@@ -15,14 +15,23 @@ h1 {
     padding-left: 4rem;
     float: left;
 }
-.searchuser{
-    float: right;
+.hello{
+    display: flex;
+    justify-content: center;
+    flex-flow: row;
+    flex-direction: row;
 }
 .card{
     box-shadow: 0 4px 8px 0 rgb(0, 0, 0);
+    height: inherit;
     width: 20rem;
     margin-top: 6rem;
     padding: 1rem;
     border-radius: 1rem;
-    margin-left: 20rem
+    margin-left: 2rem;
 }
+#card4{
+    margin-right: 16rem;
+}
+
+

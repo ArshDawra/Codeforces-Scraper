@@ -27,27 +27,45 @@
             id="Username"
             name="username"
             placeholder="Enter User Handle"
+            size="24rem"
           />
           <i
             onclick="initiate()"
-            style="height: 3rem; width: 3rem; color: rgb(7, 7, 7)"
+            style="height: 4rem; width: 4rem; color: rgb(7, 7, 7)"
             class="fa-solid fa-search"
           ></i>
         </form>
       </div>
-      <div class="card">
-        <div class="container">
-          <p id="handle">Handle :</p>
-          <p id="name">Name :</p>
-          <p id="country">Country :</p>
-          <p id="rating">Current Rating :</p>
-          <p id="maxrating">Maximum Rating :</p>
-          <p id="friendscount">Friends of User :</p>
+      <div class="hello">
+        <div class="card" id="card1">
+          <p id="friendslist">Friends List :</p>
+        </div>
+        <div class="card" id="card2">
+          <div class="container">
+            <p id="handle">Handle :</p>
+            <p id="name">Name :</p>
+            <p id="country">Country :</p>
+            <p id="rating">Current Rating :</p>
+            <p id="maxrating">Maximum Rating :</p>
+            <p id="friendscount">Friends of User :</p>
+          </div>
+        </div>
+        <div class="card" id="card3">
+          <p id="ranklist">Latest Ranking List :</p>
+        </div>
+        <div class="card" id="card4">
+          <p id="blog">Latest Blog Entry :</p>
         </div>
       </div>
       <div
         id="chartDiv"
-        style="width: 70%; height: 30rem; margin: 4rem; align-items: center"
+        style="
+          width: 70%;
+          height: 30rem;
+          margin: 4rem;
+          margin-left: 16rem;
+          align-items: center;
+        "
       ></div>
     </div>
   </body>

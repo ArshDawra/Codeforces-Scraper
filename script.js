@@ -1,9 +1,17 @@
+var apiKey="";//your api key
+var secretKey="";//your secret key
+var rand = Math.floor((Math.random() * 10000) + 100000);
+var time=Math.floor(Date.now()/1000);
+var keytime="&apiKey="+apiKey+"&time="+time.toString();
+let ranking=[];
+let blogdata=`Latest blog entry : <br>`;
 function initiate(){
     var userhandle= document.getElementById("Username").value;
     //console.log(userhandle)
     basicInfo(userhandle);
     graph(userhandle);
     showFriends();
+    blogEntries(userhandle);
     document.getElementById("Username").value="";
 }
 function basicInfo(username){
@@ -18,16 +26,16 @@ function basicInfo(username){
             document.getElementById("country").innerHTML="Country : "+userdata.result[0].country;
             document.getElementById("rating").innerHTML="Current Rating : " +userdata.result[0].rating;
             document.getElementById("maxrating").innerHTML="Maximum Rating : " +userdata.result[0].maxRating;
-            document.getElementById("friendscount").innerHTML="Friends of User : " + userdata.result[0].friendofCount;
+            document.getElementById("friendscount").innerHTML=`Friends of User :  ${userdata.result[0].friendofCount}`;
         }
         else{
             document.getElementById("handle").innerHTML="Handle : Invalid"
         }
     })
 }
-function graph(username){
+async function graph(username){
     let contestrecord =[]; 
-    axios.get('https://codeforces.com/api/user.rating?handle='+username)
+    await axios.get('https://codeforces.com/api/user.rating?handle='+username)
     .then((response)=>{
         //console.log(response)
         ratingdata=response.data;
@@ -35,11 +43,31 @@ function graph(username){
         if(ratingdata.status=="OK"){
            for(let i=0;i<ratingdata.result.length;i++){
             let row = ratingdata.result[i];
+            ranking.push({a:row.contestName,b:row.rank})
             contestrecord.push({x:row.contestName,y:row.newRating})
            }
            //console.log(contestrecord)
+           renderchart(contestrecord)
+           //console.log(ranking)
+           let ranklength=ranking.length;
+           //console.log(ranklength);
+           let x=10;
+           var ranks=`Latest Ranking List : <br><br>`;
+           if(ranklength>0){
+            if(ranklength<x){
+                x=ranklength;
+            }
+           for(let i=ranklength-1;x>0;x--,i--){
+            ranks=`${ranks}${ranking[i].a} : ${ranking[i].b} <br><br>`;
+            }
+            //console.log(ranks);
+            document.getElementById("ranklist").innerHTML=ranks;
+            ranks="";
         }
-        renderchart(contestrecord)
+        else{
+            console.log("User has attempted 0 contests")
+        }
+        }
     })
 }
 function renderchart(mydata){
@@ -52,12 +80,7 @@ function renderchart(mydata){
       }] 
     });
 }
-var apiKey="";//api key 
-var secretKey="";//secret key
-var rand = Math.floor((Math.random() * 10000) + 100000);
-var time=Math.floor(Date.now()/1000);
-var keytime="&apiKey="+apiKey+"&time="+time.toString();
-function showFriends(){
+async function showFriends(){
     var on=[];
     var all=[];
     //console.log(typeof(time.toString()))
@@ -66,14 +89,43 @@ function showFriends(){
     var stronline=`user.friends?apiKey=${apiKey}&onlyOnline=true`;
     var finalon = authorization(stronline);
     //console.log(rand)
-    axios.get(`https://codeforces.com/api/user.friends?onlyOnline=false${keytime}&apiSig=${finalall}`)
+    await axios.get(`https://codeforces.com/api/user.friends?onlyOnline=false${keytime}&apiSig=${finalall}`)
     .then((response)=>{
-        console.log(response.data)
+        //console.log(response.data);
+        for(let i=0;i<response.data.result.length;i++){
+            let e=response.data.result[i];
+            all.push(e);
+        }
+        //console.log(all)
     })
-    axios.get(`https://codeforces.com/api/user.friends?onlyOnline=true${keytime}&apiSig=${finalon}`)
+    await axios.get(`https://codeforces.com/api/user.friends?onlyOnline=true${keytime}&apiSig=${finalon}`)
     .then((response)=>{
-        console.log(response.data)
+        //console.log(response.data);
+        for(let i=0;i<response.data.result.length;i++){
+            let e=response.data.result[i];
+            on.push(e);
+        }
+        //console.log(on)
     })
+    var friends="Friends List :<br>";
+    for(let j=0;j<all.length;j++){
+        let s=all[j];
+        let d=false;
+        for(let g=0;g<on.length;g++){
+            let t=on[g];
+            if(s==t){
+                d=true;
+            }
+        }
+        if(d){
+            friends=`${friends}${s}🟢<br>`;
+        }  
+        else{
+            friends=`${friends}${s}🔴<br>`;
+        }  
+    }
+    //console.log(friends);
+    document.getElementById("friendslist").innerHTML=friends;
 }
 function authorization(methodname){
 var sig=`${rand}/${methodname}&time=${time}#${secretKey}`;
@@ -345,4 +397,35 @@ function SHA512(str) {
     binarray.push(H[i].lowOrder);
     }
     return binb2hex(binarray);
-   }
+}
+async function blogEntries(username){
+    await axios.get('https://codeforces.com/api/user.blogEntries?handle='+username)
+    .then((response)=>{
+        //console.log(response.data.result)
+        let len=response.data.result.length;
+        let blogid=response.data.result[len-1].id;
+        let heading=response.data.result[len-1].title;
+        //console.log(response.data.result[len-1]);
+        //console.log(blogid);
+        //console.log(heading);
+        blogdata=blogdata+`<br>Title : ${heading}Blog Id : ${blogid}<br><br>`;
+        comments(blogid);
+    })
+}
+async function comments(blogid){
+    await axios.get('https://codeforces.com/api/blogEntry.comments?blogEntryId='+blogid)
+    .then((response)=>{
+        //console.log(response.data)
+        if(response.data.status=="OK"){
+            //console.log(response.data.result)
+            var comlen=response.data.result.length;
+            let lastcomment=response.data.result[comlen-1].text;
+            let commentator=response.data.result[comlen-1].commentatorHandle;
+            //console.log(lastcomment);
+            //console.log(commentator);
+            blogdata=blogdata+`Last Comment by ${commentator} : ${lastcomment}`;
+            //console.log(blogdata);
+            document.getElementById("blog").innerHTML=blogdata;
+        }
+    })
+}
