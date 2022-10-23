@@ -33,5 +33,9 @@ h1 {
 #card4{
     margin-right: 16rem;
 }
+#img{
+    display: flex;
+    justify-content: center;
+}
 
 

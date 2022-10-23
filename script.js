@@ -1,5 +1,5 @@
-var apiKey="";//your api key
-var secretKey="";//your secret key
+var apiKey="bc24fbb329f6f0fb32cfea109b38793327cc897c";//your api key
+var secretKey="9d52f023e1884b5fd96c8b3d7b61394f47575d4c";//your secret key
 var rand = Math.floor((Math.random() * 10000) + 100000);
 var time=Math.floor(Date.now()/1000);
 var keytime="&apiKey="+apiKey+"&time="+time.toString();
@@ -7,7 +7,6 @@ let ranking=[];
 let blogdata=`Latest blog entry : <br>`;
 function initiate(){
     var userhandle= document.getElementById("Username").value;
-    //console.log(userhandle)
     basicInfo(userhandle);
     graph(userhandle);
     showFriends();
@@ -17,16 +16,15 @@ function initiate(){
 function basicInfo(username){
     axios.get('https://codeforces.com/api/user.info?handles='+username)
     .then((response) => {
-        //console.log(response)
         userdata=response.data;
         if(userdata.status == "OK"){
-            //console.log(userdata)
+            document.getElementById("img").innerHTML= `<img src="${userdata.result[0].avatar}">`;
             document.getElementById("handle").innerHTML="Handle : " +userdata.result[0].handle;
             document.getElementById("name").innerHTML="Name : "+userdata.result[0].firstName +" "+ userdata.result[0].lastName;
             document.getElementById("country").innerHTML="Country : "+userdata.result[0].country;
             document.getElementById("rating").innerHTML="Current Rating : " +userdata.result[0].rating;
             document.getElementById("maxrating").innerHTML="Maximum Rating : " +userdata.result[0].maxRating;
-            document.getElementById("friendscount").innerHTML=`Friends of User :  ${userdata.result[0].friendofCount}`;
+            document.getElementById("friendscount").innerHTML=`Friends of User :  ${userdata.result[0].friendOfCount}`;
         }
         else{
             document.getElementById("handle").innerHTML="Handle : Invalid"
@@ -35,22 +33,20 @@ function basicInfo(username){
 }
 async function graph(username){
     let contestrecord =[]; 
+    let contestname=[];
     await axios.get('https://codeforces.com/api/user.rating?handle='+username)
     .then((response)=>{
-        //console.log(response)
         ratingdata=response.data;
-        //console.log(ratingdata)
+        var ratinglength = ratingdata.result.length;
         if(ratingdata.status=="OK"){
            for(let i=0;i<ratingdata.result.length;i++){
             let row = ratingdata.result[i];
             ranking.push({a:row.contestName,b:row.rank})
-            contestrecord.push({x:row.contestName,y:row.newRating})
+            contestrecord.push({x:i+1,y:row.newRating,z:row.contestName})
+            contestname.push(row.contestName)
            }
-           //console.log(contestrecord)
-           renderchart(contestrecord)
-           //console.log(ranking)
+           renderchart(contestrecord,contestname)
            let ranklength=ranking.length;
-           //console.log(ranklength);
            let x=10;
            var ranks=`Latest Ranking List : <br><br>`;
            if(ranklength>0){
@@ -60,52 +56,47 @@ async function graph(username){
            for(let i=ranklength-1;x>0;x--,i--){
             ranks=`${ranks}${ranking[i].a} : ${ranking[i].b} <br><br>`;
             }
-            //console.log(ranks);
             document.getElementById("ranklist").innerHTML=ranks;
-            ranks="";
         }
         else{
             console.log("User has attempted 0 contests")
         }
+        ranks=`Latest Ranking List : <br><br>`;
         }
     })
 }
 function renderchart(mydata){
     JSC.Chart('chartDiv', {
-      defaultPoint_label_visible: true,
+        type:'Sparkline',
+        defaultPoint_label_visible: true,
+        xAxis_label_text: "Contest Number",
+        yAxis_label_text: "Rating",
+        legend_visible:false,
       series:[{
-        name:'Contest Ratings',
-        type:'line',
-        points:mydata
-      }] 
+        points:mydata,
+      }],
     });
 }
 async function showFriends(){
     var on=[];
     var all=[];
-    //console.log(typeof(time.toString()))
     var strall=`user.friends?apiKey=${apiKey}&onlyOnline=false`;
     var finalall = authorization(strall);
     var stronline=`user.friends?apiKey=${apiKey}&onlyOnline=true`;
     var finalon = authorization(stronline);
-    //console.log(rand)
     await axios.get(`https://codeforces.com/api/user.friends?onlyOnline=false${keytime}&apiSig=${finalall}`)
     .then((response)=>{
-        //console.log(response.data);
         for(let i=0;i<response.data.result.length;i++){
             let e=response.data.result[i];
             all.push(e);
         }
-        //console.log(all)
     })
     await axios.get(`https://codeforces.com/api/user.friends?onlyOnline=true${keytime}&apiSig=${finalon}`)
     .then((response)=>{
-        //console.log(response.data);
         for(let i=0;i<response.data.result.length;i++){
             let e=response.data.result[i];
             on.push(e);
         }
-        //console.log(on)
     })
     var friends="Friends List :<br>";
     for(let j=0;j<all.length;j++){
@@ -118,13 +109,12 @@ async function showFriends(){
             }
         }
         if(d){
-            friends=`${friends}${s}🟢<br>`;
+            friends=`${friends}<font color="green">${s}</font><br>`;
         }  
         else{
-            friends=`${friends}${s}🔴<br>`;
+            friends=`${friends}<font color="red">${s}</font><br>`;
         }  
     }
-    //console.log(friends);
     document.getElementById("friendslist").innerHTML=friends;
 }
 function authorization(methodname){
@@ -401,30 +391,21 @@ function SHA512(str) {
 async function blogEntries(username){
     await axios.get('https://codeforces.com/api/user.blogEntries?handle='+username)
     .then((response)=>{
-        //console.log(response.data.result)
         let len=response.data.result.length;
         let blogid=response.data.result[len-1].id;
         let heading=response.data.result[len-1].title;
-        //console.log(response.data.result[len-1]);
-        //console.log(blogid);
-        //console.log(heading);
-        blogdata=blogdata+`<br>Title : ${heading}Blog Id : ${blogid}<br><br>`;
+        blogdata=blogdata+`<br>Title : ${heading}`;
         comments(blogid);
     })
 }
 async function comments(blogid){
     await axios.get('https://codeforces.com/api/blogEntry.comments?blogEntryId='+blogid)
     .then((response)=>{
-        //console.log(response.data)
         if(response.data.status=="OK"){
-            //console.log(response.data.result)
             var comlen=response.data.result.length;
             let lastcomment=response.data.result[comlen-1].text;
             let commentator=response.data.result[comlen-1].commentatorHandle;
-            //console.log(lastcomment);
-            //console.log(commentator);
             blogdata=blogdata+`Last Comment by ${commentator} : ${lastcomment}`;
-            //console.log(blogdata);
             document.getElementById("blog").innerHTML=blogdata;
         }
     })
