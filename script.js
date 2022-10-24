@@ -1,11 +1,17 @@
-var apiKey="";//your api key
-var secretKey="";//your secret key
+var apiKey="5824b812773d6bcc8bff887ed1da38d582944a42";//your api key
+var secretKey="59ba5464d7444977554cf1ac90aba1af4b6ee63b";//your secret key
 var rand = Math.floor((Math.random() * 10000) + 100000);
 var time=Math.floor(Date.now()/1000);
 var keytime="&apiKey="+apiKey+"&time="+time.toString();
-let ranking=[];
 let blogdata=`Latest blog entry : <br>`;
+var ranks=`Latest Ranking List : <br><br>`;
 function initiate(){
+    document.getElementById("ranklist").innerHTML=`Latest Ranking List : <br><br>`;
+    document.getElementById("blog").innerHTML=`Latest blog entry : <br>`;
+    document.getElementById("card3").style.display="";
+    document.getElementById("card3").style.display="";
+    document.getElementById("card4").style.display="";
+    document.getElementById("chartDiv").style.display="";
     var userhandle= document.getElementById("Username").value;
     basicInfo(userhandle);
     graph(userhandle);
@@ -32,8 +38,8 @@ function basicInfo(username){
     })
 }
 async function graph(username){
-    let contestrecord =[]; 
-    let contestname=[];
+    let contestrecord =[];
+    let ranking=[]; 
     await axios.get('https://codeforces.com/api/user.rating?handle='+username)
     .then((response)=>{
         ratingdata=response.data;
@@ -43,27 +49,32 @@ async function graph(username){
             let row = ratingdata.result[i];
             ranking.push({a:row.contestName,b:row.rank})
             contestrecord.push({x:i+1,y:row.newRating,z:row.contestName})
-            contestname.push(row.contestName)
            }
-           renderchart(contestrecord,contestname)
+           let contestlen=contestrecord.length;
+           if(contestlen>0){
+           renderchart(contestrecord)
+           }
+           else{
+            document.getElementById("chartDiv").style.display="none";
+           }
            let ranklength=ranking.length;
            let x=10;
-           var ranks=`Latest Ranking List : <br><br>`;
            if(ranklength>0){
             if(ranklength<x){
                 x=ranklength;
             }
-           for(let i=ranklength-1;x>0;x--,i--){
+           for(let i=ranklength-1;i>=0&&x>0;x--,i--){
             ranks=`${ranks}${ranking[i].a} : ${ranking[i].b} <br><br>`;
             }
             document.getElementById("ranklist").innerHTML=ranks;
         }
         else{
             console.log("User has attempted 0 contests")
+            document.getElementById("card3").style.display="none";
         }
-        ranks=`Latest Ranking List : <br><br>`;
         }
     })
+    ranks=`Latest Ranking List : <br><br>`;
 }
 function renderchart(mydata){
     JSC.Chart('chartDiv', {
@@ -388,14 +399,29 @@ function SHA512(str) {
     }
     return binb2hex(binarray);
 }
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 async function blogEntries(username){
+    await sleep(2000)
     await axios.get('https://codeforces.com/api/user.blogEntries?handle='+username)
     .then((response)=>{
-        let len=response.data.result.length;
-        let blogid=response.data.result[len-1].id;
-        let heading=response.data.result[len-1].title;
+        if(response.data.status=="OK"){
+        let bloglen=response.data.result.length;
+        if(bloglen>0){
+        let blogid=response.data.result[0].id;
+        let heading=response.data.result[0].title;
         blogdata=blogdata+`<br>Title : ${heading}`;
         comments(blogid);
+        }
+        else{
+            document.getElementById("blog").innerHTML="";
+            document.getElementById("card4").style.display="none";
+        }
+    }
+    else{
+        document.getElementById("card4").style.display="none";
+    }
     })
 }
 async function comments(blogid){
@@ -403,10 +429,11 @@ async function comments(blogid){
     .then((response)=>{
         if(response.data.status=="OK"){
             var comlen=response.data.result.length;
-            let lastcomment=response.data.result[comlen-1].text;
-            let commentator=response.data.result[comlen-1].commentatorHandle;
+            let lastcomment=response.data.result[0].text;
+            let commentator=response.data.result[0].commentatorHandle;
             blogdata=blogdata+`Last Comment by ${commentator} : ${lastcomment}`;
             document.getElementById("blog").innerHTML=blogdata;
         }
     })
+    blogdata=`Latest blog entry : <br>`;
 }
