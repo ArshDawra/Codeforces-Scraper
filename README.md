@@ -11,12 +11,14 @@ HTML , CSS , JavaScript
 A search example
 
 ![alt text](resources/homepage.png)
+
 ![alt text](resources/examplesearch.png)
+
 ![alt text](resources/graphs.jpg)
 
 ## 🚀 About Me
 
-I'm an Electrical Engineering Sophomore at Indian Institute of Technology, Roorkee. I have a deep interest in development. I'm also exploring Web 3.0 right now.
+I'm an Electrical Engineering Sophomore at Indian Institute of Technology, Roorkee. I have deep interest in development. I'm also exploring Web 3.0 right now.
 
 ## 🔗 Links
 

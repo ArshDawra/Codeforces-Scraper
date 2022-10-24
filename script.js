@@ -1,5 +1,5 @@
-var apiKey="5824b812773d6bcc8bff887ed1da38d582944a42";//your api key
-var secretKey="59ba5464d7444977554cf1ac90aba1af4b6ee63b";//your secret key
+var apiKey="";//your api key
+var secretKey="";//your secret key
 var rand = Math.floor((Math.random() * 10000) + 100000);
 var time=Math.floor(Date.now()/1000);
 var keytime="&apiKey="+apiKey+"&time="+time.toString();
