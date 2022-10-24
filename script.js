@@ -7,7 +7,7 @@ let blogdata=`Latest blog entry : <br>`;
 var ranks=`Latest Ranking List : <br><br>`;
 function initiate(){
     document.getElementById("ranklist").innerHTML=`Latest Ranking List : <br><br>`;
-    document.getElementById("blog").innerHTML=`Latest blog entry : <br>`;
+    document.getElementById("blog").innerHTML=`Latest Blog Entry : <br>`;
     document.getElementById("card3").style.display="";
     document.getElementById("card3").style.display="";
     document.getElementById("card4").style.display="";
@@ -405,6 +405,7 @@ function sleep(ms) {
 async function blogEntries(username){
     await sleep(2000)
     await axios.get('https://codeforces.com/api/user.blogEntries?handle='+username)
+    .catch((err)=>{document.getElementById("card4").style.display="none";})
     .then((response)=>{
         if(response.data.status=="OK"){
         let bloglen=response.data.result.length;
@@ -426,6 +427,7 @@ async function blogEntries(username){
 }
 async function comments(blogid){
     await axios.get('https://codeforces.com/api/blogEntry.comments?blogEntryId='+blogid)
+    .catch((err)=>{document.getElementById("card4").style.display="none";})
     .then((response)=>{
         if(response.data.status=="OK"){
             var comlen=response.data.result.length;

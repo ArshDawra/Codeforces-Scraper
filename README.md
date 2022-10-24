@@ -12,7 +12,7 @@ A search example
 
 ![alt text](resources/homepage.png)
 ![alt text](resources/examplesearch.png)
-![alt text](resources/graphsexample.jpg)
+![alt text](resources/graphs.jpg)
 
 ## 🚀 About Me
 
